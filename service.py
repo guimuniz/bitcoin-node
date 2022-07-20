@@ -9,8 +9,8 @@ bitcoin_node = BitcoinNodeClient("http://foo:bar@0:18332/")
 def node_is_sync():
     try:
         response = bitcoin_node.get_chain_status()
-    except Exception as e:
-        return {"error": str(e)}
+    except Exception as error:
+        raise Exception(error)
 
     status = response["result"][0]["status"]
 

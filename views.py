@@ -12,8 +12,8 @@ app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 def is_sync():
     try:
         is_sync = node_is_sync()
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except Exception as error:
+        return jsonify({"error": str(error)}), 500
 
     return jsonify({
         'is_sync': is_sync
