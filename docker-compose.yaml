@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  bitcoinserver:
+    container_name: bitcoinserver
+    image: ruimarinho/bitcoin-core:23.0
+    command:
+      -printtoconsole
+      -testnet=1
+      -rpcallowip=0.0.0.0/0
+      -rpcbind=0.0.0.0
+      -rpcuser=foo
+      -rpcpassword=bar
+    ports:
+      - 18332:18332 # Testnet
+      - 18333:18333
+      - 18443:18443 # Regtest
+      - 18444:18444
+    volumes:
+      - ./bitcoin/:/home/bitcoin/.bitcoin
