@@ -1,6 +1,5 @@
 # mudar nome do arquivo
 
-from decimal import Decimal
 from client import BitcoinNodeClient
 
 # passar url pra env var -> prettyconf
