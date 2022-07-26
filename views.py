@@ -1,12 +1,12 @@
 from flask import Flask, jsonify, request
 
-from service import node_is_sync, get_fee_until_two_blocks
 from client import BitcoinNodeClient
 
 app = Flask(__name__)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 
-bitcoin_client = BitcoinNodeClient("http://foo:bar@0:18332/")
+# passar url pra env var -> prettyconf
+bitcoin_node_client = BitcoinNodeClient("http://foo:bar@0:18332/")
 
 # resolver o export FLASK_APP=service + export FLASK_ENV=development que é necessário pra rodar
 
@@ -14,9 +14,12 @@ bitcoin_client = BitcoinNodeClient("http://foo:bar@0:18332/")
 @app.route("/is-sync", methods=['GET'])
 def is_sync():
     try:
-        is_sync = node_is_sync()
+        response = bitcoin_node_client.get_chain_status()
     except Exception as error:
         return jsonify({"error": str(error)}), 500
+
+    status = response["result"][0]["status"]
+    is_sync = True if status == "active" else False
 
     return jsonify({
         'is_sync': is_sync
@@ -26,12 +29,16 @@ def is_sync():
 @app.route("/network-fee", methods=['GET'])
 def network_fee():
     try:
-        fee = get_fee_until_two_blocks()
+        response = bitcoin_node_client.get_estimate_fee(2)
     except Exception as error:
         return jsonify({"error": str(error)}), 500
 
+    fee = response["result"]["feerate"]
+    fee_in_byte = fee / 1000
+    final_fee = f"{fee_in_byte:.8f}"
+
     return jsonify({
-        'fee': fee
+        'fee': final_fee
     }), 200
 
 
@@ -43,7 +50,7 @@ def generate_wallet():
         return "Missing wallet name", 400
 
     try:
-        response = bitcoin_client.create_wallet(wallet_name)
+        response = bitcoin_node_client.create_wallet(wallet_name)
     except Exception as error:
         return jsonify({"error": str(error)}), 500
 
@@ -52,5 +59,3 @@ def generate_wallet():
     return jsonify({
         'wallet_name': wallet_name
     }), 200
-
-# passar lógica pras views e testar
