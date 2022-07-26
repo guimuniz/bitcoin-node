@@ -34,11 +34,11 @@ def network_fee():
         return jsonify({"error": str(error)}), 500
 
     fee = response["result"]["feerate"]
-    fee_in_byte = fee / 1000
-    final_fee = f"{fee_in_byte:.8f}"
+    fee_in_btc_byte = fee / 1000
+    fee_in_satoshi_byte = fee_in_btc_byte * 100000000
 
     return jsonify({
-        'fee': final_fee
+        'fee': fee_in_satoshi_byte
     }), 200
 
 
