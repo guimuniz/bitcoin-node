@@ -59,3 +59,17 @@ def generate_wallet():
     return jsonify({
         'wallet_name': wallet_name
     }), 200
+
+
+@app.route("/balance", methods=['GET'])
+def get_balance():
+    try:
+        response = bitcoin_node_client.get_balance()
+    except Exception as error:
+        return jsonify({"error": str(error)}), 500
+
+    balance = response['result']['balance']
+
+    return jsonify({
+        'balance': balance
+    }), 200

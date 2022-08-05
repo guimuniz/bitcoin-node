@@ -31,6 +31,16 @@ class BitcoinNodeClient:
             json={"method": "createwallet", "params": [wallet_name]},
         )
         if response.status_code != 200:
-            raise Exception("Error connecting to node")
+            raise Exception(response.json()["error"]['message'])
+
+        return response.json()
+
+    def get_balance(self):
+        response = requests.post(
+            url=self.url,
+            json={"method": "getbalance", "params": ["*"]},
+        )
+        if response.status_code != 200:
+            raise Exception(response.json()["error"]['message'])
 
         return response.json()
